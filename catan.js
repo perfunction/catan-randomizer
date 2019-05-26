@@ -116,6 +116,37 @@ expandedMap.coordinatesArray = [
 	[6,2],[6,0],[6,-2]
 ];
 
+var bigislandMap = new MapDefinition();
+bigislandMap.resourceDict = {
+	"desert": 1,
+	"wood": 8,
+	"clay": 6,
+	"wool": 8,
+	"grain": 8,
+	"ore": 6
+};
+bigislandMap.numberDict = {
+	2: 2,
+	3: 4,
+	4: 4,
+	5: 4,
+	6: 4,
+	8: 4,
+	9: 4,
+	10: 4,
+	11: 4,
+	12: 2
+}
+bigislandMap.coordinatesArray = [
+	[-6,3],[-6,1],[-6,-1],[-6,-3],
+	[-4,4],[-4,2],[-4,0],[-4,-2],[-4,-4],
+	[-2,5],[-2,3],[-2,1],[-2,-1],[-2,-3],[-2,-5],
+	[0,6],[0,4],[0,2],[0,0],[0,-2],[0,-4],[0,-6],
+	[2,5],[2,3],[2,1],[2,-1],[2,-3],[2,-5],
+	[4,4],[4,2],[4,0],[4,-2],[4,-4],
+	[6,3],[6,1],[6,-1],[6,-3]
+];
+
 // ----- FUNCTIONS -----
 
 window.onresize = function(event) {
@@ -196,6 +227,9 @@ function generate() {
 	
 	var mapDef;
 	switch($("input:radio['name=game-type']:checked").val()) {
+		case "bigisland":
+			mapDef = bigislandMap;
+			break;
 		case "expanded":
 			mapDef = expandedMap;
 			break;
