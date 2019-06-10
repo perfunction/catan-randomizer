@@ -21,6 +21,7 @@ var resourceTypeToColor = {
 	"wood": "#0A7300",
 	"grain": "#E0E000",
 	"desert": "#F2F0A0",
+	"gold": "#FFD700",
 	"none": "#ffffff"
 };
 var resourceTypeToImageCanvas = {
@@ -29,7 +30,8 @@ var resourceTypeToImageCanvas = {
 	"wool": null,
 	"wood": null,
 	"grain": null,
-	"desert": null
+	"desert": null,
+	"gold": null
 };
 
 //var allImagesLoaded = false;
@@ -58,6 +60,7 @@ var catanMap = new CatanMap();
 
 var normalMap = new MapDefinition();
 normalMap.resourceDict = {
+	"gold": 0,
 	"desert": 1,
 	"wood": 4,
 	"clay": 3,
@@ -87,6 +90,7 @@ normalMap.coordinatesArray = [
 
 var expandedMap = new MapDefinition();
 expandedMap.resourceDict = {
+	"gold": 0,
 	"desert": 2,
 	"wood": 6,
 	"clay": 5,
@@ -116,8 +120,41 @@ expandedMap.coordinatesArray = [
 	[6,2],[6,0],[6,-2]
 ];
 
+var bountifulMap = new MapDefinition();
+bountifulMap.resourceDict = {
+	"gold": 3,
+	"desert": 0,
+	"wood": 6,
+	"clay": 6,
+	"wool": 5,
+	"grain": 5,
+	"ore": 5
+}
+bountifulMap.numberDict = {
+	2: 1,
+	3: 2,
+	4: 3,
+	5: 4,
+	6: 4,
+	8: 4,
+	9: 4,
+	10: 3,
+	11: 2,
+	12: 1
+}
+bountifulMap.coordinatesArray = [
+	[-6,2],[-6,0],[-6,-2],
+	[-4,3],[-4,1],[-4,-1],[-4,-3],
+	[-2,4],[-2,2],[-2,0],[-2,-2],[-2,-4],
+	[0,5],[0,3],[0,1],[0,-1],[0,-3],[0,-5],
+	[2,4],[2,2],[2,0],[2,-2],[2,-4],
+	[4,3],[4,1],[4,-1],[4,-3],
+	[6,2],[6,0],[6,-2]
+];
+
 var bigislandMap = new MapDefinition();
 bigislandMap.resourceDict = {
+	"gold": 0,
 	"desert": 1,
 	"wood": 8,
 	"clay": 6,
@@ -156,7 +193,9 @@ window.onresize = function(event) {
 }
 
 function init() {
-
+	$("input:radio['name=game-type']").click(resetUserCounts);
+	$("input.user-value").blur(checkUserCounts);
+	
 	loadImages(function() {
 		var button = $('button#gen-map-button')[0];
 		$(button).click(generate);
@@ -165,7 +204,98 @@ function init() {
 	});
 	
 	addCanvas();
+	resetUserCounts();
+}
+
+function whichMap() {
+	switch($("input:radio['name=game-type']:checked").val()) {
+		case "bigisland":
+			return jQuery.extend(true, {}, bigislandMap);
+		case "bountiful":
+			return jQuery.extend(true, {}, bountifulMap);
+		case "expanded":
+			return jQuery.extend(true, {}, expandedMap);
+		default:
+			return jQuery.extend(true, {}, normalMap);
+	}
+}
+
+function resetUserCounts() {
+	var mapDef = whichMap();
 	
+	// resources
+	var total = 0;
+	
+	for (var key in mapDef.resourceDict) {
+		var num = mapDef.resourceDict[key];
+		total += num;
+		$("#"+key).val(num);
+	}
+	
+	$("#count").html(total + "/" + total);
+	$("#count").css("color", "black");
+	
+	// numbers
+	for (var key in mapDef.numberDict) {
+		var num = mapDef.numberDict[key];
+		$("#num"+key).val(num);
+	}
+	
+	total -= mapDef.resourceDict["desert"];
+	$("#numcount").html(total + "/" + total);
+	$("#numcount").css("color", "black");
+}
+
+function checkUserCounts() {
+	var mapDef = whichMap();
+	
+	// resources
+	var rTotal = 0;
+	var deserts = -mapDef.resourceDict["desert"];
+	var rDictLen = mapDef.sumDictVals(mapDef.resourceDict);
+
+	for (var key in mapDef.resourceDict) {
+		var num = parseInt($("#"+key).val());
+		rTotal += num;
+		
+		if (key == "desert") {
+			deserts += num; 
+		}
+	}
+	
+	$("#count").html(rTotal + "/" + rDictLen);
+	
+	if (rTotal != rDictLen) {
+		$("#count").css("color", "red");
+	} else {
+		$("#count").css("color", "black");
+	}
+	
+	// numbers
+	var nTotal = 0
+	var nDictLen = mapDef.sumDictVals(mapDef.numberDict) - deserts;
+		
+	for (var key in mapDef.numberDict) {
+		nTotal += parseInt($("#num"+key).val());
+	}
+	
+	$("#numcount").html(nTotal + "/" + nDictLen);
+	
+	if (nTotal != nDictLen) {
+		$("#numcount").css("color", "red");
+	} else {
+		$("#numcount").css("color", "black");
+	}
+}
+
+function applyUserCounts(mapDef) {
+	for (var key in mapDef.resourceDict) {
+		mapDef.resourceDict[key] = parseInt($("#"+key).val());
+	}
+	
+	for (var key in mapDef.numberDict) {
+		mapDef.numberDict[key] = parseInt($("#num"+key).val());
+	}
 }
 
 function preloadImages(arr, callback){
@@ -224,18 +354,9 @@ function loadImages(callback) {
 }
 
 function generate() {
+	var mapDef = whichMap();
 	
-	var mapDef;
-	switch($("input:radio['name=game-type']:checked").val()) {
-		case "bigisland":
-			mapDef = bigislandMap;
-			break;
-		case "expanded":
-			mapDef = expandedMap;
-			break;
-		default:
-			mapDef = normalMap;
-	}
+	applyUserCounts(mapDef);
 	
 	catanMap.defineMap(mapDef);
 	catanMap.generate();
@@ -301,6 +422,7 @@ CatanMap.prototype.defineMap = function(mapDefinition) {
 		
 	} else {
 		console.log("Invalid map definition.");
+		alert("Invalid map definition.");
 	}
 }
 CatanMap.prototype.generate = function() {
