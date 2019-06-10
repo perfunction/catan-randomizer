@@ -214,10 +214,19 @@ function init() {
 			let getUrl = window.location;
 			let baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + '?seed='+seed;
 
-			let inputs = $('#gen-options input[type="text"]');
+			let inputs = $('input');
+
 			inputs.each(function (){
-				baseUrl += '&' + $(this).attr('id') + '=' + $(this).val()
+				let type = $(this).attr('type')
+				console.log('type', type)
+				if(type === 'text'){
+					baseUrl += '&' + $(this).attr('id') + '=' + $(this).val()
+				} else if(type === 'checkbox'){
+					baseUrl += '&' + $(this).attr('id') + '=' + $(this).attr('checked')
+				}
+
 			});
+
 			let selectedGameType = $("input:radio['name=game-type']:checked");
 			baseUrl += '&' + selectedGameType.attr('name') + '=' + selectedGameType.val();
 
@@ -235,15 +244,19 @@ function init() {
 					if(p === 'game-type'){
 						$('input[name=game-type][value=' + urlParams[p] + ']').attr('checked', true)
 					} else if(p !== 'seed'){
-						let input = $('#' + p)
+						let input = $('#' + p);
 
 						if (input.length > 0) {
-							input.val(urlParams[p]);
-							checkUserCounts();
+							if(input.attr('type') === 'text'){
+								input.val(urlParams[p]);
+							} else if(input.attr('type') === 'checkbox'){
+								input.attr('checked', urlParams[p] == 'true')
+							}
 						}
 					}
 
 				}
+				checkUserCounts();
 				genSeed = new Math.seedrandom(seed);
 				generate()
 			}
