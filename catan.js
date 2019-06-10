@@ -601,9 +601,13 @@ CatanMap.prototype.hasHighlyProductiveNeighbors = function(tile) {
 }
 
 CatanMap.prototype.hasSameNumberedNeighbour = function(tile) {
+	if (!$("#sameNumber").is(':checked')) {
+		return false;
+	}
+	
 	var adjacentTiles = this.getAdjacentTiles(tile);
 	for (var i = 0; i < adjacentTiles.length; i += 1) {
-		if ( tile.number === adjacentTiles[i].number ) {
+		if ( tile.number == adjacentTiles[i].number ) {
 			return true;
 		}
 	}
@@ -611,6 +615,10 @@ CatanMap.prototype.hasSameNumberedNeighbour = function(tile) {
 }
 
 CatanMap.prototype.doesFormTriangle = function(tile) {
+	if (!$("#sameResource").is(':checked')) {
+		return false;
+	}
+	
 	var adjacentTiles = this.getAdjacentTiles(tile);
 	for (var i = 0; i < adjacentTiles.length; i += 1) {
 		var j = (i + 1) % adjacentTiles.length;
@@ -622,6 +630,10 @@ CatanMap.prototype.doesFormTriangle = function(tile) {
 }
 
 CatanMap.prototype.doesFormChain = function(tile) {
+	if (!$("#sameResource").is(':checked')) {
+		return false;
+	}
+	
 	var adjacentTiles = this.getAdjacentTiles(tile);
 
 	var count = 0;
