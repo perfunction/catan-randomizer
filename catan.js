@@ -1,4 +1,4 @@
-9// ----- Canvas globals -----
+// ----- Canvas globals -----
 
 var mapCanvas;
 var drawingContext;
