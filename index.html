@@ -1,105 +1,111 @@
 <!DOCTYPE html>
 
 <head>
-	<title>Catan Randomizer</title>
-	<link rel="stylesheet" href="css/stylesheet.css" type="text/css">  
-	<script src="jquery.min.js" type="text/javascript"></script>
-	<script type="text/javascript" language="javascript">
-		$(document).ready(function() {
-			init();
-		});
-	</script>
-	<script src="catan.js" type="text/javascript"></script>
+    <title>Catan Randomizer</title>
+    <link rel="stylesheet" href="css/stylesheet.css" type="text/css">
+    <script src="jquery.min.js" type="text/javascript"></script>
+    <script src=//cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js>
+    </script>
+    <script type="text/javascript" language="javascript">
+        $(document).ready(function () {
+            init();
+        });
+    </script>
+
+    <script src="catan.js" type="text/javascript"></script>
+
 </head>
 
 <body>
-	<div id="content-wrapper">
-		<div id="content-left">
-		
-			<h1 id="title">Catan Map Generator</h1>
-			<h4>By <a href="http://www.jaredkirschner.com">Jared Kirschner</a></h4>
-			
-			<div id="gen-options">
-				<div>
-					<span><b>Please select game type:</b></span><br>
-					<input type="radio" name="game-type" value="normal">Normal (1-4 players, 19 tiles)<br>
-					<input type="radio" name="game-type" value="expanded" checked>Expansion (5-6 players, 30 tiles)<br>
-					<input type="radio" name="game-type" value="bigisland">Big Island (7-8 players, 37 tiles)<br>
-				</div>
-				<br>
-				<div>
-					<span><b>Tile distribution:</b></span><br>
-					<table align='center'>
-						<tr>
-							<td><img src="./images/ore.png" width="24px"/></td>
-							<td><img src="./images/clay.png" width="24px"/></td>
-							<td><img src="./images/wool.png" width="24px"/></td>
-							<td><img src="./images/wood.png" width="24px"/></td>
-							<td><img src="./images/grain.png" width="24px"/></td>
-							<td><img src="./images/gold.png" width="24px"/></td>
-							<td><img src="./images/desert.png" width="24px"/></td>
-							<td> </td>
-						</tr>
-						<tr>
-							<td><input type="text" id="ore" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="clay" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="wool" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="wood" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="grain" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="gold" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="desert" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td id="count"></td>
-						</tr>
-					</table>
-					<input type="checkbox" id="sameResource" checked>
-					<label for="sameResource">Prevent triplicated adjacent resources</label>
-				</div>
-				<br>
-				<div>					
-					<span><b>Number distribution:</b></span><br>
-					<table align='center'>
-						<tr>
-							<td class='numBlack'>2</td>
-							<td class='numBlack'>3</td>
-							<td class='numBlack'>4</td>
-							<td class='numBlack'>5</td>
-							<td class='numRed'>6</td>
-							<td class='numRed'>8</td>
-							<td class='numBlack'>9</td>
-							<td class='numBlack'>10</td>
-							<td class='numBlack'>11</td>
-							<td class='numBlack'>12</td>
-							<td> </td>
-						</tr>
-						<tr>
-							<td><input type="text" id="num2" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num3" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num4" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num5" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num6" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num8" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num9" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num10" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num11" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td><input type="text" id="num12" value="0" maxlength="1" size="1" class="user-value"></td>
-							<td id="numcount"></td>
-						</tr>
-					</table>
-					<input type="checkbox" id="sameNumber" checked>
-					<label for="sameNumber">Prevent duplicated adjacent numbers</label>
-				</div>
-			</div>
-			
-			<button id="gen-map-button" type="button" disabled="true">
-				Loading resources...
-			</button>
-		
-		</div>
-		<div id="content-right">
-			<div id="map-container">
-			</div>
-		</div>
-	</div>
+<div id="content-wrapper">
+    <div id="content-left">
+
+        <h1 id="title">Catan Map Generator</h1>
+        <h4>By <a href="http://www.jaredkirschner.com">Jared Kirschner</a></h4>
+
+        <div id="gen-options">
+            <div>
+                <span><b>Please select game type:</b></span><br>
+                <input type="radio" name="game-type" value="normal">Normal (1-4 players, 19 tiles)<br>
+                <input type="radio" name="game-type" value="expanded" checked>Expansion (5-6 players, 30 tiles)<br>
+                <input type="radio" name="game-type" value="bigisland">Big Island (7-8 players, 37 tiles)<br>
+            </div>
+            <br>
+            <div>
+                <span><b>Tile distribution:</b></span><br>
+                <table align='center'>
+                    <tr>
+                        <td><img src="./images/ore.png" width="24px"/></td>
+                        <td><img src="./images/clay.png" width="24px"/></td>
+                        <td><img src="./images/wool.png" width="24px"/></td>
+                        <td><img src="./images/wood.png" width="24px"/></td>
+                        <td><img src="./images/grain.png" width="24px"/></td>
+                        <td><img src="./images/gold.png" width="24px"/></td>
+                        <td><img src="./images/desert.png" width="24px"/></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" id="ore" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="clay" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="wool" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="wood" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="grain" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="gold" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="desert" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td id="count"></td>
+                    </tr>
+                </table>
+                <input type="checkbox" id="sameResource" checked>
+                <label for="sameResource">Prevent triplicated adjacent resources</label>
+            </div>
+            <br>
+            <div>
+                <span><b>Number distribution:</b></span><br>
+                <table align='center'>
+                    <tr>
+                        <td class='numBlack'>2</td>
+                        <td class='numBlack'>3</td>
+                        <td class='numBlack'>4</td>
+                        <td class='numBlack'>5</td>
+                        <td class='numRed'>6</td>
+                        <td class='numRed'>8</td>
+                        <td class='numBlack'>9</td>
+                        <td class='numBlack'>10</td>
+                        <td class='numBlack'>11</td>
+                        <td class='numBlack'>12</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" id="num2" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num3" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num4" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num5" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num6" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num8" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num9" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num10" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num11" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td><input type="text" id="num12" value="0" maxlength="1" size="1" class="user-value"></td>
+                        <td id="numcount"></td>
+                    </tr>
+                </table>
+                <input type="checkbox" id="sameNumber" checked>
+                <label for="sameNumber">Prevent duplicated adjacent numbers</label>
+            </div>
+        </div>
+
+        <button id="gen-map-button" type="button" disabled="true">
+            Loading resources...
+        </button>
+        <button id="copy-link">Copy Link</button>
+
+    </div>
+    <div id="content-right">
+        <div id="map-container">
+        </div>
+    </div>
+</div>
+<input id="link" type="text" value="" style="position: absolute; left: -1000px" >
 </body>
 
 </html>
