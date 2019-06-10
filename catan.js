@@ -359,7 +359,12 @@ function generate() {
 	applyUserCounts(mapDef);
 	
 	catanMap.defineMap(mapDef);
-	catanMap.generate();
+
+	var retry;
+	do {
+		retry = catanMap.generate();
+	} while(retry);
+
 	catanMap.resize();
 	catanMap.draw();
 	
@@ -426,6 +431,8 @@ CatanMap.prototype.defineMap = function(mapDefinition) {
 	}
 }
 CatanMap.prototype.generate = function() {
+
+	this.coordToTile = {};
 	
 	if (this.mapDefinition) {
 		
@@ -501,19 +508,39 @@ CatanMap.prototype.generate = function() {
 				} while ( invalid );
 				tileCoordinates = tileCoordinates.concat(tmpCoords);
 			} else {
-				newCoords = tileCoordinates.random(true);
-				newHexTile.setCoordinate.apply(
-					newHexTile,
-					newCoords
-				);
+
+                invalid = true;
+                var tmpCoords = [];
+                while ( invalid && tileCoordinates.length > 0) {
+                    newCoords = tileCoordinates.random(true);
+                    newHexTile.setCoordinate.apply(
+                        newHexTile,
+                        newCoords
+                    );
+                    invalid = this.doesFormTriangle(newHexTile) || this.doesFormChain(newHexTile) || this.hasSameNumberedNeighbour(newHexTile);
+
+					if( invalid ) {
+						if( tileCoordinates.length === 0 ) {
+							console.log("gotcha! Try again!");
+							return true;
+						} else {
+							tmpCoords.push(newCoords);
+						}
+					}
+                }
+                tileCoordinates = tileCoordinates.concat(tmpCoords);
 			}
 			
 			this.hexTiles.push(newHexTile);
 			this.coordToTile[newCoords.toString()] = newHexTile;
 		} // end for loop
+
+		return false;
 		
 	} else {
+
 		console.log("No map definition.");
+		return false;
 	}
 	
 }
@@ -570,6 +597,62 @@ CatanMap.prototype.hasHighlyProductiveNeighbors = function(tile) {
 			return true;
 		}
 	}
+	return false;
+}
+
+CatanMap.prototype.hasSameNumberedNeighbour = function(tile) {
+	var adjacentTiles = this.getAdjacentTiles(tile);
+	for (var i = 0; i < adjacentTiles.length; i += 1) {
+		if ( tile.number === adjacentTiles[i].number ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+CatanMap.prototype.doesFormTriangle = function(tile) {
+	var adjacentTiles = this.getAdjacentTiles(tile);
+	for (var i = 0; i < adjacentTiles.length; i += 1) {
+		var j = (i + 1) % adjacentTiles.length;
+		if ( tile.resourceType === adjacentTiles[i].resourceType && adjacentTiles[i].resourceType === adjacentTiles[j].resourceType ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+CatanMap.prototype.doesFormChain = function(tile) {
+	var adjacentTiles = this.getAdjacentTiles(tile);
+
+	var count = 0;
+	for (var i = 0; i < adjacentTiles.length; i += 1) {
+		if ( tile.resourceType === adjacentTiles[i].resourceType ) {
+			count = count + 1;
+		}
+	}
+
+	if( count >= 2 ) {
+		console.log("tile: " + tile.number + ", " + tile.resourceType + " -> true");
+		return true;
+	}
+
+	for (var i = 0; i < adjacentTiles.length; i += 1) {
+		if ( tile.resourceType === adjacentTiles[i].resourceType ) {
+			var ad2 = this.getAdjacentTiles(adjacentTiles[i]);
+			for (var j = 0; j < ad2.length; j += 1) {
+				if( tile.gridX === ad2[j].gridX && tile.gridY === ad2[j].gridY ) {
+					continue;
+				}
+
+				if( tile.resourceType === ad2[j].resourceType ) {
+					console.log("tile: " + tile.number + ", " + tile.resourceType + " -> true");
+					return true;
+				}
+			}
+		}
+	}
+
+	console.log("tile: " + tile.number + ", " + tile.resourceType + " -> false");
 	return false;
 }
 
