@@ -120,6 +120,38 @@ expandedMap.coordinatesArray = [
 	[6,2],[6,0],[6,-2]
 ];
 
+var leagueMap = new MapDefinition();
+leagueMap.resourceDict = {
+	"gold": 2,
+	"desert": 0,
+	"wood": 6,
+	"clay": 5,
+	"wool": 6,
+	"grain": 6,
+	"ore": 5
+}
+leagueMap.numberDict = {
+	2: 1,
+	3: 3,
+	4: 3,
+	5: 5,
+	6: 3,
+	8: 3,
+	9: 5,
+	10: 3,
+	11: 3,
+	12: 1
+}
+leagueMap.coordinatesArray = [
+	[-6,2],[-6,0],[-6,-2],
+	[-4,3],[-4,1],[-4,-1],[-4,-3],
+	[-2,4],[-2,2],[-2,0],[-2,-2],[-2,-4],
+	[0,5],[0,3],[0,1],[0,-1],[0,-3],[0,-5],
+	[2,4],[2,2],[2,0],[2,-2],[2,-4],
+	[4,3],[4,1],[4,-1],[4,-3],
+	[6,2],[6,0],[6,-2]
+];
+
 var bountifulMap = new MapDefinition();
 bountifulMap.resourceDict = {
 	"gold": 3,
@@ -276,6 +308,8 @@ function whichMap() {
 			return jQuery.extend(true, {}, bountifulMap);
 		case "expanded":
 			return jQuery.extend(true, {}, expandedMap);
+		case "leagueMap":
+			return jQuery.extend(true, {}, leagueMap);
 		default:
 			return jQuery.extend(true, {}, normalMap);
 	}
