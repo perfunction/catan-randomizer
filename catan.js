@@ -120,6 +120,38 @@ expandedMap.coordinatesArray = [
 	[6,2],[6,0],[6,-2]
 ];
 
+var leagueMap = new MapDefinition();
+leagueMap.resourceDict = {
+	"gold": 2,
+	"desert": 0,
+	"wood": 6,
+	"clay": 5,
+	"wool": 6,
+	"grain": 6,
+	"ore": 5
+}
+leagueMap.numberDict = {
+	2: 1,
+	3: 3,
+	4: 3,
+	5: 5,
+	6: 3,
+	8: 3,
+	9: 5,
+	10: 3,
+	11: 3,
+	12: 1
+}
+leagueMap.coordinatesArray = [
+	[-6,2],[-6,0],[-6,-2],
+	[-4,3],[-4,1],[-4,-1],[-4,-3],
+	[-2,4],[-2,2],[-2,0],[-2,-2],[-2,-4],
+	[0,5],[0,3],[0,1],[0,-1],[0,-3],[0,-5],
+	[2,4],[2,2],[2,0],[2,-2],[2,-4],
+	[4,3],[4,1],[4,-1],[4,-3],
+	[6,2],[6,0],[6,-2]
+];
+
 var bountifulMap = new MapDefinition();
 bountifulMap.resourceDict = {
 	"gold": 3,
@@ -210,21 +242,31 @@ function init() {
 		button.innerHTML = "Click to generate.";
 
 
-		$('#copy-link').click(()=>{
+		$('#copy-link').click(function(){
 			let getUrl = window.location;
-			let baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + '?seed='+seed;
 
-			let inputs = $('#gen-options input[type="text"]');
+			let baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + '?seed='+seed;
+			console.log(getUrl)
+			let inputs = $('input');
+
 			inputs.each(function (){
-				baseUrl += '&' + $(this).attr('id') + '=' + $(this).val()
+				let type = $(this).attr('type')
+				if(type === 'text'){
+					baseUrl += '&' + $(this).attr('id') + '=' + $(this).val()
+				} else if(type === 'checkbox'){
+					baseUrl += '&' + $(this).attr('id') + '=' + $(this).attr('checked')
+				}
+
 			});
+
 			let selectedGameType = $("input:radio['name=game-type']:checked");
 			baseUrl += '&' + selectedGameType.attr('name') + '=' + selectedGameType.val();
 
 			let linkEle = $('#link');
 			linkEle.val(baseUrl);
+			console.log(baseUrl, linkEle.val())
 			linkEle.select();
-			document.execCommand("copy");
+			document.execCommand("cut");
 			alert('Copied the url to your clip board');
 		});
 
@@ -235,15 +277,19 @@ function init() {
 					if(p === 'game-type'){
 						$('input[name=game-type][value=' + urlParams[p] + ']').attr('checked', true)
 					} else if(p !== 'seed'){
-						let input = $('#' + p)
+						let input = $('#' + p);
 
 						if (input.length > 0) {
-							input.val(urlParams[p]);
-							checkUserCounts();
+							if(input.attr('type') === 'text'){
+								input.val(urlParams[p]);
+							} else if(input.attr('type') === 'checkbox'){
+								input.attr('checked', urlParams[p] == 'true')
+							}
 						}
 					}
 
 				}
+				checkUserCounts();
 				genSeed = new Math.seedrandom(seed);
 				generate()
 			}
@@ -263,6 +309,8 @@ function whichMap() {
 			return jQuery.extend(true, {}, bountifulMap);
 		case "expanded":
 			return jQuery.extend(true, {}, expandedMap);
+		case "leagueMap":
+			return jQuery.extend(true, {}, leagueMap);
 		default:
 			return jQuery.extend(true, {}, normalMap);
 	}
