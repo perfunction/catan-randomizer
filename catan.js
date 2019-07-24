@@ -242,15 +242,15 @@ function init() {
 		button.innerHTML = "Click to generate.";
 
 
-		$('#copy-link').click(()=>{
+		$('#copy-link').click(function(){
 			let getUrl = window.location;
-			let baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + '?seed='+seed;
 
+			let baseUrl = getUrl .protocol + "//" + getUrl.host + "/" + getUrl.pathname.split('/')[1] + '?seed='+seed;
+			console.log(getUrl)
 			let inputs = $('input');
 
 			inputs.each(function (){
 				let type = $(this).attr('type')
-				console.log('type', type)
 				if(type === 'text'){
 					baseUrl += '&' + $(this).attr('id') + '=' + $(this).val()
 				} else if(type === 'checkbox'){
@@ -264,8 +264,9 @@ function init() {
 
 			let linkEle = $('#link');
 			linkEle.val(baseUrl);
+			console.log(baseUrl, linkEle.val())
 			linkEle.select();
-			document.execCommand("copy");
+			document.execCommand("cut");
 			alert('Copied the url to your clip board');
 		});
 
